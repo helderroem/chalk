@@ -44,7 +44,7 @@
     "text"
   ],
   "dependencies": {
-    "ansi-styles": "^2.1.0",
+    "chalk-extra-styles": "helderroem/chalk-extra-styles",
     "escape-string-regexp": "^1.0.2",
     "supports-color": "^3.1.2"
   },
