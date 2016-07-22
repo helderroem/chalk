@@ -1,6 +1,6 @@
 'use strict';
 var escapeStringRegexp = require('escape-string-regexp');
-var ansiStyles = require('ansi-styles');
+var extraStyles = require('chalk-extra-styles');
 var supportsColor = require('supports-color');
 
 var defineProps = Object.defineProperties;
@@ -13,13 +13,13 @@ function Chalk(options) {
 
 // use bright blue on Windows as the normal blue color is illegible
 if (isSimpleWindowsTerm) {
-	ansiStyles.blue.open = '\u001b[94m';
+	extraStyles.blue.open = '\u001b[94m';
 }
 
 var styles = {};
 
-Object.keys(ansiStyles).forEach(function (key) {
-	ansiStyles[key].closeRe = new RegExp(escapeStringRegexp(ansiStyles[key].close), 'g');
+Object.keys(extraStyles).forEach(function (key) {
+	extraStyles[key].closeRe = new RegExp(escapeStringRegexp(extraStyles[key].close), 'g');
 
 	styles[key] = {
 		get: function () {
@@ -68,13 +68,13 @@ function applyStyle() {
 	// Turns out that on Windows dimmed gray text becomes invisible in cmd.exe,
 	// see https://github.com/chalk/chalk/issues/58
 	// If we're on Windows and we're dealing with a gray color, temporarily make 'dim' a noop.
-	var originalDim = ansiStyles.dim.open;
+	var originalDim = extraStyles.dim.open;
 	if (isSimpleWindowsTerm && (nestedStyles.indexOf('gray') !== -1 || nestedStyles.indexOf('grey') !== -1)) {
-		ansiStyles.dim.open = '';
+		extraStyles.dim.open = '';
 	}
 
 	while (i--) {
-		var code = ansiStyles[nestedStyles[i]];
+		var code = extraStyles[nestedStyles[i]];
 
 		// Replace any instances already present with a re-opening code
 		// otherwise only the part of the string until said closing code
@@ -88,7 +88,7 @@ function applyStyle() {
 	}
 
 	// Reset the original 'dim' if we changed it to work around the Windows dimmed gray issue.
-	ansiStyles.dim.open = originalDim;
+	extraStyles.dim.open = originalDim;
 
 	return str;
 }
@@ -96,5 +96,5 @@ function applyStyle() {
 defineProps(Chalk.prototype, styles);
 
 module.exports = new Chalk();
-module.exports.styles = ansiStyles;
+module.exports.styles = extraStyles;
 module.exports.supportsColor = supportsColor;
